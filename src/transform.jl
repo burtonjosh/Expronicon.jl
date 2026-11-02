@@ -76,7 +76,8 @@ function name_only(@nospecialize(ex))
     ex.head in [:call, :curly, :(<:), :(::), :where, :function, :kw, :(=), :(->)] && return name_only(ex.args[1])
     ex.head === :. && return name_only(ex.args[2])
     ex.head === :... && return name_only(ex.args[1])
-    ex.head === :module && return name_only(ex.args[2])
+    # The name is second to last: Julia 1.14 adds a syntax version in front of the `notbare` flag.
+    ex.head === :module && return name_only(ex.args[end-1])
     error("unsupported expression $ex")
 end
 

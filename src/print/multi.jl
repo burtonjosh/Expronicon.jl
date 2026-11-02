@@ -435,6 +435,9 @@ function (p::Printer)(ex)
             end
             print_finally(finally_body)
             println(); tab(); keyword("end")
+        # Julia 1.14 adds a syntax version in front of the `notbare` flag, which is not printed.
+        @case Expr(:module, ::VersionNumber, notbare, name, body)
+            p(Expr(:module, notbare, name, body))
         @case Expr(:module, notbare, name, body)
             leading_tab()
             keyword(notbare ? "module " : "baremodule "); inline(name); println()

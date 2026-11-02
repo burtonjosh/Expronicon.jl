@@ -304,3 +304,14 @@ ex = quote
 end
 
 print_expr(ex)
+
+@testset "module with a syntax version" begin
+    # Julia 1.14 adds a syntax version in front of the `notbare` flag, which is printed the same as without it.
+    for notbare in (true, false)
+        body = Expr(:block, :(x = 1), :(y = 2))
+        with_version = Expr(:module, v"1.14.0", notbare, :Foo, body)
+        without_version = Expr(:module, notbare, :Foo, body)
+        @test sprint(print_expr, with_version) == sprint(print_expr, without_version)
+        @test sprint(print_inline, with_version) == sprint(print_inline, without_version)
+    end
+end
